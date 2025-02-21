@@ -7,6 +7,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import java.util.List;
 
@@ -39,27 +40,50 @@ public class BasicItemController {
         return "basic/addForm";
     }
 
-//    // 상품등록 처리 V1
+    // 상품등록 처리 V1
 //    @PostMapping("/add")
-//    public String addItemV1(@RequestParam String itemName,
-//                       @RequestParam int price,
-//                       @RequestParam Integer quantity,
-//                       Model model) {
-//        Item item = new Item();
-//        item.setItemName(itemName);
-//        item.setPrice(price);
-//        item.setQuantity(quantity);
-//
-//        itemRepository.save(item);
-//        model.addAttribute("item", item);
-//        return "/basic/item";
-//    }
+    public String addItemV1(@RequestParam String itemName,
+                       @RequestParam int price,
+                       @RequestParam Integer quantity,
+                       Model model) {
+        Item item = new Item();
+        item.setItemName(itemName);
+        item.setPrice(price);
+        item.setQuantity(quantity);
 
-    // 상품등록 처리 V2
-    @PostMapping("/add")
-    public String addItemV2(@ModelAttribute Item item) { // @ModelAttribute 생략가능
         itemRepository.save(item);
+        model.addAttribute("item", item);
         return "/basic/item";
+    }
+
+    // 상품등록 처리 V3
+    //@PostMapping("/add")
+    public String addItemV3(@ModelAttribute Item item) { // @ModelAttribute 생략가능
+        itemRepository.save(item);
+        return "basic/item";
+    }
+
+    // 상품등록 처리 V4
+//    @PostMapping("/add")
+    public String addItemV4(Item item) { // @ModelAttribute 생략가능
+        itemRepository.save(item);
+        return "basic/item";
+    }
+
+    // 상품등록 처리 V5
+//    @PostMapping("/add")
+    public String addItemV5(Item item) { // @ModelAttribute 생략가능
+        itemRepository.save(item);
+        return "redirect:/basic/items/"+item.getId();
+    }
+
+    // 상품등록 처리 V6
+    @PostMapping("/add")
+    public String addItemV6(Item item, RedirectAttributes redirectAttributes) { // @ModelAttribute 생략가능
+        Item savedItem = itemRepository.save(item);
+        redirectAttributes.addAttribute("itemId", savedItem.getId());
+        redirectAttributes.addAttribute("status", true);
+        return "redirect:/basic/items/{itemId}";
     }
 
     // 상품 수정 폼
